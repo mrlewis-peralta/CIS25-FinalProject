@@ -5,6 +5,8 @@
 #include "HumanPlayer.h"
 #include <iostream>
 #include <limits>
+#include <cctype>   // NEW: for std::tolower
+#include <string>   // NEW: for std::string
 
 HumanPlayer::HumanPlayer(char symbol, const std::string& name) : Player(symbol, name) {}
 
@@ -22,14 +24,51 @@ void HumanPlayer::makeMove(Board& board) {
 
         std::cout << getName() << " (" << getSymbol() << "), enter a number (1-9): ";
 
-        std::cin >> choice;
+        // 🔹 Changed: read into a string instead of directly into an int
+        std::string input;
+        std::cin >> input;
 
         if (!std::cin) {
-            // Handle non-numeric input
+            // Handle totally broken stream
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             std::cout << "Invalid input. Please enter a number from 1 to 9.\n";
             continue;
+        }
+
+        // We only care about a single character (digit or letter)
+        if (input.size() != 1) {
+            std::cout << "Invalid input. Please enter a single key (1-9 or Q/W/E/A/S/D/Z/X/C).\n";
+            continue;
+        }
+
+        char ch = input[0];
+        choice = 0;  // reset each loop
+
+        // Case 1: actual digit '1'–'9'
+        if (ch >= '1' && ch <= '9') {
+            choice = ch - '0';
+        } else {
+            // SECRET Case 2: letter mapping (QWE / ASD / ZXC)
+            char lower = static_cast<char>(
+                std::tolower(static_cast<unsigned char>(ch))
+            );
+
+            switch (lower) {
+                case 'q': choice = 7; break; // top-left
+                case 'w': choice = 8; break; // top-middle
+                case 'e': choice = 9; break; // top-right
+                case 'a': choice = 4; break; // middle-left
+                case 's': choice = 5; break; // center
+                case 'd': choice = 6; break; // middle-right
+                case 'z': choice = 1; break; // bottom-left
+                case 'x': choice = 2; break; // bottom-middle
+                case 'c': choice = 3; break; // bottom-right
+                default:
+                    // Not a recognized key
+                    std::cout << "Invalid input. Please use 1-9 or Q/W/E/A/S/D/Z/X/C.\n";
+                    continue;
+            }
         }
 
         if (choice < 1 || choice > 9) {

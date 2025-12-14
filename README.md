@@ -1,130 +1,150 @@
-# TicTacToe AI
+# TicTacToe AI — Final Project Submission (CIS 25)
 
-A command-line TicTacToe game featuring multiple types of players, including Human players, a Regular AI, a traditional Unbeatable AI, and a Minimax-based AI.
+A C++ console Tic-Tac-Toe game with multiple player types:
+- Human player (keyboard input)
+- Regular AI (simple strategy)
+- Unbeatable AI (perfect-play rules)
+- MiniMax AI (minimax search)
 
-## Features
+---
 
-Planned core features for this project:
+## How to Run
 
-- Human vs Human gameplay
-- Human vs Regular AI (simple or non-optimal strategy)
-- Human vs Unbeatable AI (traditional perfect strategy)
-- Human vs Minimax AI (algorithmic perfect strategy using recursive minimax)
-- Ability to choose the type of Player 1 and Player 2 independently (any combination of the four types)
-- Clear board display, input validation, and turn-by-turn prompts
-- Game menu that allows replaying multiple games without restarting the program
+### Option A: CLion
+1. Open the project folder in CLion.
+2. Choose the **FinalProject** target.
+3. Build + Run.
 
-## Building
-
-This project is intended to be built with CMake.
+### Option B: Command Line (CMake)
+From your build directory (example: `cmake-build-debug/`):
 
 ```bash
-mkdir build
-cd build
 cmake ..
 cmake --build .
+./FinalProject
 ```
 
-This will generate and compile the executable inside the `build/` directory.
+---
 
-## Usage
+## How to Play (Controls)
 
-After building, run:
+When prompted for a move, you can use either:
 
+### Numpad-style numbers
+```
+7 | 8 | 9
+--+---+--
+4 | 5 | 6
+--+---+--
+1 | 2 | 3
+```
+
+### OR “WASD-style” letters (case-insensitive)
+```
+Q | W | E      maps to      7 | 8 | 9
+--+---+--                   --+---+--
+A | S | D      maps to      4 | 5 | 6
+--+---+--                   --+---+--
+Z | X | C      maps to      1 | 2 | 3
+```
+
+---
+
+## Implemented Features
+
+### Board System
+- 3×3 grid stored and managed by `Board`
+- Valid move detection (`isValidMove`)
+- Apply move (`applyMove`)
+- Win detection (`winCheck`)
+- Tie detection (`tieCheck`)
+- Console rendering (`display`)
+
+### Game Loop / Controller
+- Menu-driven `TicTacToe::run()` loop
+- Player selection (Human / Regular AI / Unbeatable AI / MiniMax AI)
+- Alternating turns, win/tie detection, and cleanup
+
+### AI Players
+- **RegularAIPlayer**
+  - Takes center if available
+  - Plays an immediate winning move if possible
+  - Blocks an opponent’s immediate winning move if needed
+  - Otherwise chooses a random valid move
+
+- **UnbeatableAIPlayer**
+  - Implements the classic “perfect play” rule ordering (win, block, fork logic, center, opposite corner, corner, edge)
+  - Verified by simulation testing that it never loses against random or Regular AI
+
+- **MiniMaxAIPlayer**
+  - Uses minimax search to select optimal moves
+  - Designed to be unbeatable (win or tie with perfect play)
+
+---
+
+## Tests
+
+### Board Tests
+- Test file: `test_board.cpp`
+- Executable: `board_tests`
+
+Run:
 ```bash
-./tictactoe_game
+ctest --verbose
+```
+(or run `board_tests` directly inside CLion)
+
+### AI Tests (including simulations)
+- Test file: `test_ai.cpp`
+- Executable: `ai_tests`
+- Includes both small deterministic tests and heavy simulations.
+
+Run directly:
+```bash
+./ai_tests
 ```
 
-When complete, the program will:
+---
 
-- Display a main menu
-- Let the user choose the type of Player 1 (X) and Player 2 (O):
-  - Human
-  - Regular AI
-  - Unbeatable AI
-  - Minimax AI
-- Run a full TicTacToe game:
-  - Alternate turns between player1 and player2
-  - Display the board after each move
-  - Enforce valid moves
-  - Detect and announce wins or ties
-- Ask the user if they want to play another game or quit
+## Repository Structure (Typical)
 
-## Class Overview
+- `main.cpp` — program entry
+- `TicTacToe.*` — menu + game loop
+- `Board.*` — board state and rules
+- `Player.*` — base class for players
+- `HumanPlayer.*` — human input handling
+- `AIPlayer.*` — shared AI helpers
+- `RegularAIPlayer.*` — regular AI strategy
+- `UnbeatableAIPlayer.*` — perfect-play rules
+- `MiniMaxAIPlayer.*` — minimax AI
+- `test_board.cpp` — board unit tests
+- `test_ai.cpp` — AI tests + simulations
+- `docs/` — checkpoint documentation (tests + reflections)
 
-### `Board`
-Manages the TicTacToe grid, move validation, applying moves, win detection, tie detection, and displaying the board.
-
-### `Player` (abstract)
-Base class for all player types. Stores the player's symbol and name and declares `makeMove(Board& board)` as a pure virtual function.
-
-### `AIPlayer` (abstract)
-Base class for AI player types. Inherits from `Player` and provides a common interface and constructor for AI-based players.
-
-### `HumanPlayer`
-Derived from `Player`. Handles user input, validates moves using the `Board`, and applies valid moves.
-
-### `RegularAIPlayer`
-Derived from `AIPlayer`. Uses a simple or non-optimal strategy to pick moves (e.g., random valid moves or basic heuristics).
-
-### `UnbeatableAIPlayer`
-Derived from `AIPlayer`. Implements a traditional perfect TicTacToe strategy using known optimal play patterns.
-
-### `MiniMaxAIPlayer`
-Derived from `AIPlayer`. Uses a recursive minimax search to evaluate possible board states and choose an optimal move. This class is a friend of `Board` so it can examine internal board state for evaluation.
-
-### `TicTacToe`
-Coordinates the overall program flow:
-- Presents the main menu
-- Allows the user to choose player types for Player 1 and Player 2
-- Manages the `Board`, `player1`, `player2`, and `currentPlayer`
-- Runs the game loop and handles replaying games
-
-## Project Structure
-
-- `src/` Implementation files (`main.cpp`, `Board.cpp`, `TicTacToe.cpp`, and player `.cpp` files)
-- `include/` Header files for all classes
-- `docs/` Checkpoint documents and reflections
-- `CMakeLists.txt`
+---
 
 ## Current Status
 
-### ✅ Implemented Features (Checkpoint Features)
-- **Feature 1: Regular AI Player**  
-  Implemented with intelligent heuristics:  
-  - Plays winning move if available  
-  - Blocks opponent’s immediate win  
-  - Takes center when available  
-  - Otherwise takes a corner or a valid move  
+**Implemented Features**:
+- ✅ Feature 1: Board system (moves, win/tie detection, display)
+- ✅ Feature 2: Player system (Human + AI subclasses)
+- ✅ Feature 3: Regular AI strategy
+- ✅ Feature 4: Unbeatable AI strategy
+- ✅ Feature 5: MiniMax AI strategy
+- ✅ Feature 6: Automated tests (Board + AI test suite)
 
-- **Feature 2: Unbeatable AI Player (Perfect Strategy)**  
-  Fully implemented using the traditional 8-rule perfect TicTacToe strategy:  
-  - Immediate win  
-  - Immediate block  
-  - Fork creation  
-  - Correct specialized fork-blocking logic  
-  - Center, opposite-corner, empty-corner, empty-side rules  
-  - Verified through automated AI-vs-AI simulations ensuring Unbeatable never loses  
+**In Progress**:
+- ⏳ (None)
 
-- **Feature 3: MiniMax AI Player**  
-  Fully implemented using recursive minimax to evaluate game states and select optimal moves.  
-  - Uses the existing `Board` interface for move simulation  
-  - Plays perfect TicTacToe (wins when possible, otherwise forces a tie)  
-  - Integrates as an additional selectable player type in the setup menu  
+**Planned**:
+- 📋 Optional UI polish (clearer prompts, replay, score tracking)
+- 📋 Optional refactors (reduce duplication, tighter separation of concerns)
 
-### ✅ Core Gameplay Completed
-- Working 3×3 board with formatted display
-- Valid-move enforcement
-- Win and tie detection
-- Replay-friendly game loop
-- Independent selection of Player 1 and Player 2 types
+**Known Issues / Limitations**:
+- The console UI is simple (text-only).
+- AI simulations depend on randomness for the Random/Regular matchups (results vary, but Unbeatable should never lose).
 
-### 🔧 In Progress / Optional Improvements
-- Additional UI polish for prompts and menu text
-- Polishing of implementation code
-- Secret QWE/ASD/ZXC input in-lieu of numberpad for Human Player
+---
 
-## Known Issues / Limitations
-- **Numberpad-style input** may be awkward on laptops without a numberpad.
-- **Phone keypad layout** differs from a keyboard keypad layout, which may confuse some users.
-- The Unbeatable AI implementation is functional but could be refactored for cleaner reuse of shared AI utilities.
+## Author
+Matthew Lewis — CIS 25 Final Project
