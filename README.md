@@ -136,14 +136,6 @@ Run directly:
 **In Progress**:
 - ⏳ (None)
 
-**Planned**:
-- 📋 Optional UI polish (clearer prompts, replay, score tracking)
-- 📋 Optional refactors (reduce duplication, tighter separation of concerns)
-
-**Known Issues / Limitations**:
-- The console UI is simple (text-only).
-- AI simulations depend on randomness for the Random/Regular matchups (results vary, but Unbeatable should never lose).
-
 ---
 
 ## Author
